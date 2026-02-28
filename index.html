@@ -83,10 +83,30 @@
       margin-top: 8px;
     }
     .result { margin-top: 12px; padding: 14px; border-radius: 10px; border: 1px solid #334155; }
+    .result.error { border-color: #ef4444; color: #fecaca; }
     .score { font-size: 1.2rem; font-weight: bold; }
     .good { color: var(--accent); }
     .mid { color: var(--warn); }
     .bad { color: var(--danger); }
+    .community-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .post-thumb {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid #334155;
+      margin: 8px 0;
+      max-height: 220px;
+      object-fit: cover;
+    }
+    .post-meta {
+      color: var(--muted);
+      font-size: 0.85rem;
+      margin-top: 8px;
+    }
     a.link {
       color: #93c5fd;
       text-decoration: none;
@@ -108,6 +128,7 @@
     <div class="tabs">
       <button class="tab active" data-tab="analise">Analisar anúncio</button>
       <button class="tab" data-tab="anuncios">Bons anúncios (Facebook)</button>
+      <button class="tab" data-tab="comunidade">Comunidade (postar anúncios)</button>
     </div>
 
     <section id="analise" class="panel active">
@@ -186,6 +207,44 @@
           <p>Busca específica para UTVs e quadriciclos premium.</p>
           <a class="link" target="_blank" rel="noopener" href="https://www.facebook.com/marketplace/search/?query=can-am%20polaris%20off-road">Abrir busca</a>
         </article>
+      </div>
+    </section>
+
+    <section id="comunidade" class="panel">
+      <div class="card">
+        <h2>Forum da comunidade: poste bons achados</h2>
+        <p>Compartilhe um anúncio do Facebook Marketplace com foto para ajudar outros trilheiros.</p>
+        <div class="grid">
+          <div>
+            <label for="postTitulo">Título do anúncio</label>
+            <input id="postTitulo" type="text" placeholder="Ex.: Quadriciclo Yamaha 350 em ótimo estado" />
+          </div>
+          <div>
+            <label for="postCategoria">Categoria</label>
+            <select id="postCategoria">
+              <option value="Quadriciclo">Quadriciclo</option>
+              <option value="Moto de trilha">Moto de trilha</option>
+              <option value="Jipe 4x4">Jipe 4x4</option>
+            </select>
+          </div>
+        </div>
+        <label for="postLink" style="margin-top:10px;">Link do post no Facebook Marketplace</label>
+        <input id="postLink" type="url" placeholder="https://www.facebook.com/marketplace/item/..." />
+
+        <label for="postDescricao" style="margin-top:10px;">Descrição rápida</label>
+        <textarea id="postDescricao" placeholder="Ex.: Preço abaixo da média, pneus novos, sem pendências."></textarea>
+
+        <label for="postImagem">Foto do post</label>
+        <input id="postImagem" type="file" accept="image/*" />
+
+        <button id="publicarPostBtn">Publicar no fórum</button>
+        <div id="postResultado" class="result" aria-live="polite">Preencha os campos para publicar um post na comunidade.</div>
+      </div>
+
+      <div class="card">
+        <h3>Posts da comunidade</h3>
+        <p>Os posts ficam salvos no navegador local (localStorage).</p>
+        <div id="communityList" class="community-list"></div>
       </div>
     </section>
 
@@ -279,6 +338,92 @@
         <p><b>Pontos-chave:</b> ${pontos.length ? pontos.join(' • ') : 'Sem pontos críticos adicionais.'}</p>
       `;
     });
+
+    const communityList = document.getElementById('communityList');
+    const postResultado = document.getElementById('postResultado');
+
+    function carregarPosts() {
+      const posts = JSON.parse(localStorage.getItem('bg4x4_posts') || '[]');
+      communityList.innerHTML = '';
+
+      if (!posts.length) {
+        communityList.innerHTML = '<div class="card">Ainda não há posts. Seja o primeiro a compartilhar um bom anúncio.</div>';
+        return;
+      }
+
+      posts.forEach(post => {
+        const article = document.createElement('article');
+        article.className = 'card';
+        article.innerHTML = `
+          <h4>${post.titulo}</h4>
+          <p><b>Categoria:</b> ${post.categoria}</p>
+          ${post.imagem ? `<img class="post-thumb" src="${post.imagem}" alt="Foto do anúncio ${post.titulo}" />` : ''}
+          <p>${post.descricao || 'Sem descrição adicional.'}</p>
+          <a class="link" href="${post.link}" target="_blank" rel="noopener">Abrir anúncio no Facebook</a>
+          <div class="post-meta">Publicado em ${post.data}</div>
+        `;
+        communityList.appendChild(article);
+      });
+    }
+
+    function salvarPost(post) {
+      const posts = JSON.parse(localStorage.getItem('bg4x4_posts') || '[]');
+      posts.unshift(post);
+      localStorage.setItem('bg4x4_posts', JSON.stringify(posts.slice(0, 30)));
+    }
+
+    document.getElementById('publicarPostBtn').addEventListener('click', () => {
+      const titulo = document.getElementById('postTitulo').value.trim();
+      const categoria = document.getElementById('postCategoria').value;
+      const link = document.getElementById('postLink').value.trim();
+      const descricao = document.getElementById('postDescricao').value.trim();
+      const imagemInput = document.getElementById('postImagem');
+      const arquivo = imagemInput.files[0];
+
+      if (!titulo || !link) {
+        postResultado.classList.add('error');
+        postResultado.textContent = 'Título e link do anúncio são obrigatórios.';
+        return;
+      }
+
+      if (!link.includes('facebook.com/marketplace')) {
+        postResultado.classList.add('error');
+        postResultado.textContent = 'Insira um link válido do Facebook Marketplace.';
+        return;
+      }
+
+      const finalizarPost = (imagemBase64 = '') => {
+        const post = {
+          titulo,
+          categoria,
+          link,
+          descricao,
+          imagem: imagemBase64,
+          data: new Date().toLocaleString('pt-BR')
+        };
+
+        salvarPost(post);
+        carregarPosts();
+
+        postResultado.classList.remove('error');
+        postResultado.textContent = 'Post publicado com sucesso no fórum local da comunidade!';
+
+        document.getElementById('postTitulo').value = '';
+        document.getElementById('postLink').value = '';
+        document.getElementById('postDescricao').value = '';
+        document.getElementById('postImagem').value = '';
+      };
+
+      if (arquivo) {
+        const reader = new FileReader();
+        reader.onload = () => finalizarPost(reader.result);
+        reader.readAsDataURL(arquivo);
+      } else {
+        finalizarPost();
+      }
+    });
+
+    carregarPosts();
   </script>
 </body>
 </html>
