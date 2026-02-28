@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TrilhaCerta | Analisador de anúncios off-road</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="hero">
+    <h1>TrilhaCerta</h1>
+    <p>Plataforma para trilheiros analisarem anúncios e encontrarem boas oportunidades em jipes, quadriciclos e motos de trilha.</p>
+  </header>
+
+  <main class="container">
+    <nav class="tabs" role="tablist" aria-label="Abas principais">
+      <button class="tab active" role="tab" aria-selected="true" aria-controls="analise" id="tab-analise">Análise de anúncio</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="anuncios" id="tab-anuncios">Anúncios recomendados</button>
+    </nav>
+
+    <section id="analise" class="panel active" role="tabpanel" aria-labelledby="tab-analise">
+      <h2>Vale a pena comprar?</h2>
+      <p>Preencha os dados do anúncio para receber uma análise rápida.</p>
+
+      <form id="anuncio-form" class="card">
+        <div class="grid">
+          <label>
+            Tipo de veículo
+            <select id="tipo" required>
+              <option value="">Selecione</option>
+              <option value="jipe">Jipe</option>
+              <option value="quadriciclo">Quadriciclo</option>
+              <option value="moto">Moto de trilha</option>
+            </select>
+          </label>
+
+          <label>
+            Marca / modelo
+            <input id="modelo" type="text" placeholder="Ex.: Troller T4" required />
+          </label>
+
+          <label>
+            Ano
+            <input id="ano" type="number" min="1980" max="2030" required />
+          </label>
+
+          <label>
+            Preço anunciado (R$)
+            <input id="preco" type="number" min="1000" step="500" required />
+          </label>
+
+          <label>
+            Quilometragem / horas de uso
+            <input id="uso" type="number" min="0" step="100" required />
+          </label>
+
+          <label>
+            Estado geral
+            <select id="estado" required>
+              <option value="">Selecione</option>
+              <option value="excelente">Excelente</option>
+              <option value="bom">Bom</option>
+              <option value="regular">Regular</option>
+              <option value="ruim">Ruim</option>
+            </select>
+          </label>
+
+          <label>
+            Possui histórico de manutenção?
+            <select id="manutencao" required>
+              <option value="">Selecione</option>
+              <option value="sim">Sim</option>
+              <option value="parcial">Parcial</option>
+              <option value="nao">Não</option>
+            </select>
+          </label>
+
+          <label>
+            Reformas/modificações feitas
+            <input id="mods" type="text" placeholder="Ex.: suspensão elevada, pneu mud" />
+          </label>
+        </div>
+
+        <button type="submit" class="btn">Analisar anúncio</button>
+      </form>
+
+      <article id="resultado" class="resultado hidden" aria-live="polite"></article>
+    </section>
+
+    <section id="anuncios" class="panel" role="tabpanel" aria-labelledby="tab-anuncios">
+      <h2>Boas oportunidades no Facebook Marketplace</h2>
+      <p>Links com buscas prontas no Marketplace para acelerar sua pesquisa por anúncios relevantes.</p>
+      <div id="cards" class="cards"></div>
+    </section>
+  </main>
+
+  <footer>
+    <small>TrilhaCerta • Use esta análise como apoio e sempre faça vistoria presencial antes de fechar negócio.</small>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
