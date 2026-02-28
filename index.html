@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bezerras grávidas 4x4</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #121c31;
+      --card: #1a2742;
+      --accent: #4ade80;
+      --accent-2: #38bdf8;
+      --text: #e5edff;
+      --muted: #9db0d3;
+      --danger: #f87171;
+      --warn: #fbbf24;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: linear-gradient(180deg, #060b16 0%, #0b1220 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .tab-btn {
+      border: 1px solid #2a3a5f;
+      background: var(--panel);
+      color: var(--text);
+      padding: 12px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+    }
+
+    .tab-btn.active {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .tab-content {
+      display: none;
+      background: rgba(18, 28, 49, 0.9);
+      border: 1px solid #243253;
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .tab-content.active { display: block; }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    input, select, textarea, button {
+      font: inherit;
+      border-radius: 10px;
+      border: 1px solid #2b3a5f;
+      background: #0f1830;
+      color: var(--text);
+      padding: 10px 12px;
+    }
+
+    textarea { min-height: 90px; resize: vertical; }
+
+    button.primary {
+      background: linear-gradient(90deg, #22c55e 0%, #06b6d4 100%);
+      border: none;
+      color: #081425;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 14px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid #2a3a5f;
+      background: #0d1730;
+    }
+
+    .result.good { border-color: #15803d; }
+    .result.medium { border-color: #a16207; }
+    .result.bad { border-color: #b91c1c; }
+
+    .cards {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      margin-top: 12px;
+    }
+
+    .card {
+      border: 1px solid #2a3a5f;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .card h4 { margin: 0 0 8px; }
+    .meta { color: var(--muted); font-size: 0.88rem; margin-bottom: 8px; }
+
+    .thumb {
+      width: 100%;
+      max-height: 170px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #304269;
+      margin-bottom: 8px;
+      background: #0d1730;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background: #173159;
+      color: #9dd3ff;
+    }
+
+    a { color: #93c5fd; }
+
+    .empty {
+      color: var(--muted);
+      border: 1px dashed #2d3d63;
+      border-radius: 10px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <div class="brand">bezerras grávidas 4x4</div>
+        <div class="subtitle">Plataforma para trilheiros avaliarem e compartilharem anúncios de jipes, quadriciclos e motos de trilha.</div>
+      </div>
+      <span class="pill">Versão HTML (funciona em qualquer navegador)</span>
+    </header>
+
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="analise">1) Análise de anúncio</button>
+      <button class="tab-btn" data-tab="achados">2) Bons anúncios (Facebook Marketplace)</button>
+      <button class="tab-btn" data-tab="comunidade">3) Comunidade de posts</button>
+    </div>
+
+    <section id="analise" class="tab-content active">
+      <h3>Analisador de anúncio de trilha</h3>
+      <p class="subtitle">Preencha os dados principais do anúncio e receba uma análise automática: <b>vale a pena</b>, <b>negociar</b> ou <b>evitar</b>.</p>
+      <form id="formAnalise" class="grid">
+        <div class="field">
+          <label>Tipo</label>
+          <select id="tipo" required>
+            <option value="jipe">Jipe</option>
+            <option value="quadriciclo">Quadriciclo</option>
+            <option value="moto">Moto de trilha</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Preço pedido (R$)</label>
+          <input id="preco" type="number" min="0" required placeholder="Ex: 45000" />
+        </div>
+        <div class="field">
+          <label>Ano</label>
+          <input id="ano" type="number" min="1970" max="2026" required placeholder="Ex: 2018" />
+        </div>
+        <div class="field">
+          <label>Quilometragem / uso</label>
+          <input id="km" type="number" min="0" required placeholder="Ex: 32000" />
+        </div>
+        <div class="field">
+          <label>Condição mecânica</label>
+          <select id="condicao">
+            <option value="otima">Ótima</option>
+            <option value="boa">Boa</option>
+            <option value="regular">Regular</option>
+            <option value="ruim">Ruim</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Documentação</label>
+          <select id="docs">
+            <option value="ok">Tudo OK</option>
+            <option value="pendencia">Com pendências</option>
+            <option value="sem">Sem documento / duvidoso</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Tem preparo/modificações para trilha?</label>
+          <select id="mods">
+            <option value="sim">Sim</option>
+            <option value="nao">Não</option>
+          </select>
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>Observações extras (opcional)</label>
+          <textarea id="obs" placeholder="Ex: trocou pneu recentemente, fez revisão, histórico de uso pesado..."></textarea>
+        </div>
+        <div style="grid-column: 1/-1;">
+          <button type="submit" class="primary">Analisar anúncio</button>
+        </div>
+      </form>
+      <div id="resultadoAnalise" class="result" style="display:none"></div>
+    </section>
+
+    <section id="achados" class="tab-content">
+      <h3>Bons anúncios do Facebook Marketplace</h3>
+      <p class="subtitle">Cole links de anúncios interessantes para montar uma lista útil para toda a galera da trilha.</p>
+
+      <form id="formAchado" class="grid">
+        <div class="field">
+          <label>Categoria</label>
+          <select id="aTipo">
+            <option value="Jipe">Jipe</option>
+            <option value="Quadriciclo">Quadriciclo</option>
+            <option value="Moto de trilha">Moto de trilha</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Título do anúncio</label>
+          <input id="aTitulo" required placeholder="Ex: TR4 4x4 revisada" />
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>Link do Facebook Marketplace</label>
+          <input id="aLink" type="url" required placeholder="https://www.facebook.com/marketplace/item/..." />
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>Resumo (por que é um bom anúncio?)</label>
+          <textarea id="aResumo" required placeholder="Ex: preço abaixo da média, manutenção em dia, pneus novos..."></textarea>
+        </div>
+        <div style="grid-column: 1/-1;">
+          <button type="submit" class="primary">Salvar anúncio</button>
+        </div>
+      </form>
+
+      <div id="listaAchados" class="cards"></div>
+      <div id="achadosVazio" class="empty">Ainda não há anúncios salvos. Adicione o primeiro!</div>
+    </section>
+
+    <section id="comunidade" class="tab-content">
+      <h3>Comunidade (estilo fórum)</h3>
+      <p class="subtitle">Usuários podem publicar achados com imagem e link do Marketplace para ajudar outros trilheiros.</p>
+
+      <form id="formPost" class="grid">
+        <div class="field">
+          <label>Seu nome</label>
+          <input id="pAutor" required placeholder="Ex: João da Trilha" />
+        </div>
+        <div class="field">
+          <label>Título do post</label>
+          <input id="pTitulo" required placeholder="Ex: Quadriciclo top em SP" />
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>Link do post no Marketplace</label>
+          <input id="pLink" type="url" required placeholder="https://www.facebook.com/marketplace/item/..." />
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>URL da foto do anúncio</label>
+          <input id="pImagem" type="url" required placeholder="https://...jpg" />
+        </div>
+        <div class="field" style="grid-column: 1/-1;">
+          <label>Comentário</label>
+          <textarea id="pTexto" required placeholder="Por que esse anúncio vale a pena?"></textarea>
+        </div>
+        <div style="grid-column: 1/-1;">
+          <button type="submit" class="primary">Publicar no fórum</button>
+        </div>
+      </form>
+
+      <div id="listaPosts" class="cards"></div>
+      <div id="postsVazio" class="empty">Nenhum post ainda. Seja o primeiro a publicar!</div>
+    </section>
+  </div>
+
+  <script>
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tabBtns.forEach(b => b.classList.remove('active'));
+        tabContents.forEach(tc => tc.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab).classList.add('active');
+      });
+    });
+
+    const formAnalise = document.getElementById('formAnalise');
+    const resultadoAnalise = document.getElementById('resultadoAnalise');
+
+    function calcularMediaPreco(tipo, ano) {
+      const idade = Math.max(0, new Date().getFullYear() - Number(ano));
+      const base = tipo === 'jipe' ? 90000 : tipo === 'quadriciclo' ? 45000 : 25000;
+      return Math.max(8000, base - idade * (tipo === 'jipe' ? 3500 : 1800));
+    }
+
+    formAnalise.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const tipo = document.getElementById('tipo').value;
+      const preco = Number(document.getElementById('preco').value);
+      const ano = Number(document.getElementById('ano').value);
+      const km = Number(document.getElementById('km').value);
+      const condicao = document.getElementById('condicao').value;
+      const docs = document.getElementById('docs').value;
+      const mods = document.getElementById('mods').value;
+      const obs = document.getElementById('obs').value.trim();
+
+      const media = calcularMediaPreco(tipo, ano);
+      let score = 50;
+
+      const fatorPreco = preco / media;
+      if (fatorPreco <= 0.8) score += 25;
+      else if (fatorPreco <= 1.0) score += 12;
+      else if (fatorPreco <= 1.15) score -= 8;
+      else score -= 20;
+
+      if (condicao === 'otima') score += 20;
+      if (condicao === 'boa') score += 10;
+      if (condicao === 'regular') score -= 8;
+      if (condicao === 'ruim') score -= 20;
+
+      if (docs === 'ok') score += 12;
+      if (docs === 'pendencia') score -= 15;
+      if (docs === 'sem') score -= 35;
+
+      if (mods === 'sim') score += 5;
+      if (km > 80000) score -= 12;
+      else if (km < 30000) score += 6;
+
+      score = Math.max(0, Math.min(100, score));
+
+      let veredito = 'Negociar melhor';
+      let classe = 'medium';
+      const dicas = [];
+
+      if (score >= 75) {
+        veredito = 'Vale a pena';
+        classe = 'good';
+      } else if (score < 45) {
+        veredito = 'Melhor evitar';
+        classe = 'bad';
+      }
+
+      if (fatorPreco > 1.0) dicas.push('Tente negociar preço para ficar mais próximo da média de mercado.');
+      if (docs !== 'ok') dicas.push('Regularize documentação antes de fechar negócio.');
+      if (condicao === 'regular' || condicao === 'ruim') dicas.push('Exija laudo mecânico e teste em trilha leve.');
+      if (km > 80000) dicas.push('Cheque histórico de manutenção de transmissão/suspensão.');
+      if (!dicas.length) dicas.push('Anúncio consistente; confirme apenas procedência e histórico de uso.');
+
+      resultadoAnalise.style.display = 'block';
+      resultadoAnalise.className = `result ${classe}`;
+      resultadoAnalise.innerHTML = `
+        <h4 style="margin:0 0 8px;">Resultado: ${veredito} (${score}/100)</h4>
+        <div class="meta">Preço informado: R$ ${preco.toLocaleString('pt-BR')} | Referência estimada: R$ ${Math.round(media).toLocaleString('pt-BR')}</div>
+        <ul>${dicas.map(d => `<li>${d}</li>`).join('')}</ul>
+        ${obs ? `<p><b>Observação registrada:</b> ${obs}</p>` : ''}
+      `;
+    });
+
+    const KEY_ACHADOS = 'bg4x4_achados';
+    const KEY_POSTS = 'bg4x4_posts';
+
+    function carregarLista(chave, fallback = []) {
+      try {
+        return JSON.parse(localStorage.getItem(chave)) || fallback;
+      } catch {
+        return fallback;
+      }
+    }
+
+    function salvarLista(chave, lista) {
+      localStorage.setItem(chave, JSON.stringify(lista));
+    }
+
+    const listaAchados = document.getElementById('listaAchados');
+    const achadosVazio = document.getElementById('achadosVazio');
+    const formAchado = document.getElementById('formAchado');
+
+    let achados = carregarLista(KEY_ACHADOS, [
+      {
+        tipo: 'Jipe',
+        titulo: 'Exemplo: anúncio de jipe com revisão em dia',
+        link: 'https://www.facebook.com/marketplace/',
+        resumo: 'Use este exemplo como referência. Troque pelos anúncios reais que vocês encontrarem.'
+      }
+    ]);
+
+    function renderAchados() {
+      listaAchados.innerHTML = '';
+      achadosVazio.style.display = achados.length ? 'none' : 'block';
+
+      achados.forEach((item, idx) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <h4>${item.titulo}</h4>
+          <div class="meta">Categoria: ${item.tipo}</div>
+          <p>${item.resumo}</p>
+          <p><a href="${item.link}" target="_blank" rel="noopener">Abrir anúncio no Facebook Marketplace</a></p>
+          <button data-remove-achado="${idx}">Remover</button>
+        `;
+        listaAchados.appendChild(card);
+      });
+
+      document.querySelectorAll('[data-remove-achado]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-remove-achado'));
+          achados.splice(i, 1);
+          salvarLista(KEY_ACHADOS, achados);
+          renderAchados();
+        });
+      });
+    }
+
+    formAchado.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        tipo: document.getElementById('aTipo').value,
+        titulo: document.getElementById('aTitulo').value.trim(),
+        link: document.getElementById('aLink').value.trim(),
+        resumo: document.getElementById('aResumo').value.trim(),
+      };
+      achados.unshift(novo);
+      salvarLista(KEY_ACHADOS, achados);
+      formAchado.reset();
+      renderAchados();
+    });
+
+    const listaPosts = document.getElementById('listaPosts');
+    const postsVazio = document.getElementById('postsVazio');
+    const formPost = document.getElementById('formPost');
+
+    let posts = carregarLista(KEY_POSTS, []);
+
+    function renderPosts() {
+      listaPosts.innerHTML = '';
+      postsVazio.style.display = posts.length ? 'none' : 'block';
+
+      posts.forEach((post, idx) => {
+        const card = document.createElement('article');
+        card.className = 'card';
+        card.innerHTML = `
+          <img class="thumb" src="${post.imagem}" alt="Imagem do anúncio" onerror="this.style.display='none'" />
+          <h4>${post.titulo}</h4>
+          <div class="meta">Por ${post.autor} • ${post.data}</div>
+          <p>${post.texto}</p>
+          <p><a href="${post.link}" target="_blank" rel="noopener">Ver anúncio no Facebook Marketplace</a></p>
+          <button data-like="${idx}">👍 Curtir (${post.likes || 0})</button>
+          <button data-remove-post="${idx}">Remover</button>
+        `;
+        listaPosts.appendChild(card);
+      });
+
+      document.querySelectorAll('[data-like]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-like'));
+          posts[i].likes = (posts[i].likes || 0) + 1;
+          salvarLista(KEY_POSTS, posts);
+          renderPosts();
+        });
+      });
+
+      document.querySelectorAll('[data-remove-post]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const i = Number(btn.getAttribute('data-remove-post'));
+          posts.splice(i, 1);
+          salvarLista(KEY_POSTS, posts);
+          renderPosts();
+        });
+      });
+    }
+
+    formPost.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const novo = {
+        autor: document.getElementById('pAutor').value.trim(),
+        titulo: document.getElementById('pTitulo').value.trim(),
+        link: document.getElementById('pLink').value.trim(),
+        imagem: document.getElementById('pImagem').value.trim(),
+        texto: document.getElementById('pTexto').value.trim(),
+        likes: 0,
+        data: new Date().toLocaleString('pt-BR')
+      };
+
+      posts.unshift(novo);
+      salvarLista(KEY_POSTS, posts);
+      formPost.reset();
+      renderPosts();
+    });
+
+    renderAchados();
+    renderPosts();
+  </script>
+</body>
+</html>
